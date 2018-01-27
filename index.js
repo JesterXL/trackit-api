@@ -1,3 +1,5 @@
+const log = console.log;
+log("Starting Fastify...");
 const fastify = require('fastify')()
 
 fastify.get('/api/ping', (request, reply) => {
@@ -5,7 +7,8 @@ fastify.get('/api/ping', (request, reply) => {
 })
 
 const port = process.env.PORT || 3000;
-fastify.listen(port, '127.0.0.1', function (err) {
+log("Port:", port);
+fastify.listen(port,  (err) => {
   if (err) throw err
   console.log(`server listening on ${fastify.server.address().port}`)
 });
