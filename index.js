@@ -9,7 +9,12 @@ const {
 	getUsers,
 	createUser,
 	deleteUser
-} = require('./database');
+} = require('./database').users;
+const {
+	getProjects,
+    createProject,
+    deleteProject
+} = require('./database').projects;
 
 
 const server = restify.createServer();
@@ -81,6 +86,41 @@ server.del('/api/users/delete/:username', (req, res) => {
 	});
 	
 });
+
+server.get('/api/projects', (req, res) => {
+	getProjects()
+	.then(result => {
+		res.send({result: true, data: result.rows});
+	})
+	.catch(error => {
+		res.send(500, {result: false, error: `Failed to connect to database: ${error}`});
+	});
+});
+
+// server.post('/api/projects/create', (req, res) => {
+
+// 	createUser(getUsername(req.body), getPassword(req.body), getEmail(req.body))
+// 	.then(result => {
+// 		res.send({result: true});
+// 	})
+// 	.catch(error => {
+// 		log("/api/users/create, error:", error);
+// 		res.send(500, {result: false, error});
+// 	});
+// });
+
+// server.del('/api/users/delete/:username', (req, res) => {
+// 	deleteUser(req.params.username)
+// 	.then(result => {
+// 		log("result:", result);
+// 		res.send({result: true, data: `Deleted ${result}`});
+// 	})
+// 	.catch(error => {
+// 		log("/api/users/delete/:username, error:", error);
+// 		res.send(500, {result: false, error: error.message});
+// 	});
+	
+// });
 
 server.get('/api/pingdatabase', (req, res) => {
 	testDatabase()
