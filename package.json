@@ -11,7 +11,10 @@
     "scale0": "heroku ps:scale web=0",
     "open": "heroku open",
     "logs": "heroku logs --tail",
-    "local": "heroku local web"
+    "logs:postgres": "heroku logs -p postgres -t",
+    "local": "heroku local web",
+    "pg:diagnose": "heroku pg:diagnose",
+    "pg:info": "heroku pg:info"
   },
   "repository": {
     "type": "git",
@@ -28,6 +31,8 @@
     "fastify": "^0.40.0",
     "folktale": "^2.0.1",
     "lodash": "^4.17.4",
+    "moment": "^2.20.1",
+    "pg": "7.4.1",
     "restify": "^6.3.4"
   }
 }
