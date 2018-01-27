@@ -4,7 +4,14 @@
   "description": "API for trackit",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "push": "git push heroku master",
+    "scale1": "heroku ps:scale web=1",
+    "scale0": "heroku ps:scale web=0",
+    "open": "heroku open",
+    "logs": "heroku logs --tail",
+    "local": "heroku local web"
   },
   "repository": {
     "type": "git",
@@ -16,5 +23,10 @@
   "bugs": {
     "url": "https://github.com/JesterXL/trackit-api/issues"
   },
-  "homepage": "https://github.com/JesterXL/trackit-api#readme"
+  "homepage": "https://github.com/JesterXL/trackit-api#readme",
+  "dependencies": {
+    "fastify": "^0.40.0",
+    "folktale": "^2.0.1",
+    "lodash": "^4.17.4"
+  }
 }
