@@ -2,6 +2,9 @@ const log = console.log;
 log("Starting Fastify...");
 const fastify = require('fastify')()
 
+fastify.get('/', (request, reply) => {
+  reply.send({ result: true })
+})
 fastify.get('/api/ping', (request, reply) => {
   reply.send({ result: true, data: 'pong' })
 })
