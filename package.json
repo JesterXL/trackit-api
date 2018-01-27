@@ -1,0 +1,20 @@
+{
+  "name": "trackit-api",
+  "version": "1.0.0",
+  "description": "API for trackit",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JesterXL/trackit-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JesterXL/trackit-api/issues"
+  },
+  "homepage": "https://github.com/JesterXL/trackit-api#readme"
+}
