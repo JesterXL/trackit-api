@@ -1,7 +1,8 @@
 const {
     getUsers,
     createUser,
-    deleteUser
+    deleteUser,
+    login
 } = require('./users');
 const {
     getProjects,
@@ -13,7 +14,8 @@ module.exports = {
     users: {
         getUsers,
         createUser,
-        deleteUser
+        deleteUser,
+        login
     },
     projects: {
         getProjects,

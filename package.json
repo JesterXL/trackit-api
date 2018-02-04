@@ -28,11 +28,14 @@
   },
   "homepage": "https://github.com/JesterXL/trackit-api#readme",
   "dependencies": {
+    "bcrypt": "^1.0.3",
     "fastify": "^0.40.0",
     "folktale": "^2.0.1",
     "lodash": "^4.17.4",
     "moment": "^2.20.1",
     "pg": "7.4.1",
-    "restify": "^6.3.4"
+    "random-number-csprng": "^1.0.2",
+    "restify": "^6.3.4",
+    "restify-oauth2-pure": "^1.0.3"
   }
 }
