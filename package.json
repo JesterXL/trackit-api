@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "mocha './tests/unit/**/*.test.js'",
+    "coverage": "istanbul cover _mocha './tests/unit/**/*.test.js'",
     "push": "git push heroku master",
     "scale1": "heroku ps:scale web=1",
     "scale0": "heroku ps:scale web=0",

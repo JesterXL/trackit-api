@@ -75,26 +75,13 @@ const login = curryN(4,
 
 const findUserByUsername = curryN(2, 
     (dbClient, username) =>
-        client.connect()
-        .then(() => client.query('SELECT id,username FROM users WHERE username = $1;', [username]))
+        dbClient.connect()
+        .then(() => dbClient.query('SELECT id,username FROM users WHERE username = $1;', [username]))
         .then(result => {
             if(result.rowCount > 0) {
                 return first(result.rows);
             } else {
                 return Promise.reject(new Error(`Username ${username} not found.`));
-            }
-        })
-)
-
-const findUserByUsernameAndPassword = curryN(3,
-    (dbClient, username, password) =>
-        client.connect()
-        .then(() => client.query('SELECT id,username FROM users WHERE username = $1 AND password = $2;', [username, password]))
-        .then(result => {
-            if(result.rowCount > 0) {
-                return first(result.rows);
-            } else {
-                return Promise.reject(new Error(`Username ${username} and password combination not found.`));
             }
         })
 )
@@ -181,7 +168,6 @@ module.exports = {
     deleteUser,
     findUser,
     findUserByUsername,
-    findUserByUsernameAndPassword,
 
     comparePassword,
 

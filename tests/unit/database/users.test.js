@@ -8,6 +8,7 @@ const {
     findUser,
     comparePassword,
     login,
+    findUserByUsername,
 } = require('../../../database/users')
 
 const stubDBClient = {
@@ -73,6 +74,16 @@ describe('database/users', () => {
     describe('login', ()=> {
         it('should work with good stubs', done => {
             login(stubDBClient, stubBCryptModule, 'username', 'password')
+            .then(result => {
+                expect(result.username).to.equal('someuser');
+                done();
+            })
+            .catch(done);
+        })
+    })
+    describe('findUserByUsername', ()=> {
+        it('should work with good stubs', done => {
+            findUserByUsername(stubDBClient, 'someuser')
             .then(result => {
                 expect(result.username).to.equal('someuser');
                 done();
