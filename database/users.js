@@ -94,6 +94,14 @@ const createUserUnsafe = curryN(5,
             'INSERT INTO users(username, email, salt, password, date) VALUES($1, $2, $3, $4, $5)',
             [username, email, passwordHash, salt, now]
         )
+        .then(result => {
+            if(result.rowCount > 0) {
+                return first(result.rows);
+            } else {
+                console.error(result);
+                return Promise.reject(new Error('failed to create user'));
+            }
+        });
     }
 )
 
@@ -110,7 +118,7 @@ const hashPassword = curryN(3,
 const encryptPassword = curryN(3, 
         (bcryptModule, saltRounds, password) =>
             generateSalt(bcryptModule, saltRounds)
-            .then(hashPassword(bycryptModule, password))
+            .then(hashPassword(bcryptModule, password))
 )
 
 const createUser = curryN(6,
@@ -145,9 +153,9 @@ const createUser = curryN(6,
 )
 
 const deleteUser = curryN(2, 
-    (dbClent, username) =>
-        client.connect()
-        .then(() => client.query(
+    (dbClient, username) =>
+        dbClient.connect()
+        .then(() => dbClient.query(
             'DELETE FROM users WHERE username = $1;',
             [username]
         ))
@@ -155,7 +163,7 @@ const deleteUser = curryN(2,
             if(result.rowCount === 0) {
                 return Promise.reject(new Error(`Username ${username} was not found.`));
             } else {
-                return Promise.resolve(username);
+                return Promise.resolve(first(result.rows));
             }
         })
 )
@@ -170,6 +178,7 @@ module.exports = {
     findUserByUsername,
 
     comparePassword,
+    encryptPassword,
 
     login
 };

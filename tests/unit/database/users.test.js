@@ -9,11 +9,14 @@ const {
     comparePassword,
     login,
     findUserByUsername,
+    encryptPassword,
+    createUser,
+    deleteUser
 } = require('../../../database/users')
 
 const stubDBClient = {
     connect: ()=> Promise.resolve(),
-    query: () => ({
+    query: () => Promise.resolve({
         rowCount: 1,
         rows: [{
             id: 1,
@@ -24,7 +27,9 @@ const stubDBClient = {
     })
 }
 const stubBCryptModule = {
-    compare: (password, hash) => Promise.resolve(true)
+    compare: (password, hash) => Promise.resolve(true),
+    genSalt: (saltRounds) => Promise.resolve('generatedsalt'),
+    hash: ()=> Promise.resolve('hashed')
 };
 
 describe('database/users', () => {
@@ -89,6 +94,36 @@ describe('database/users', () => {
                 done();
             })
             .catch(done);
+        })
+    })
+    describe('encryptPassword', ()=> {
+        it('should work with good stubs', done => {
+            encryptPassword(stubBCryptModule, 15, 'password')
+            .then(result => {
+                console.log("result:", result);
+                done();
+            })
+            .catch(done);
+        })
+    })
+    describe('createUser', ()=> {
+        it('should work with good stubs', done => {
+            createUser(stubDBClient, stubBCryptModule, 15, 'username', 'password', 'email')
+            .then(result => {
+                expect(result.username).to.equal('someuser');
+                done();
+            })
+            .catch(done);
+        })
+    })
+    describe('deleteUser', ()=> {
+        it('should work with good stubs', done => {
+            deleteUser(stubDBClient, 'username')
+            .then(result => {
+                console.log("result:", result);
+                done();
+            })
+            .catch(done)
         })
     })
 })
