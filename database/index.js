@@ -1,25 +1,13 @@
-const {
-    getUsers,
-    createUser,
-    deleteUser,
-    login
-} = require('./users');
-const {
-    getProjects,
-    createProject,
-    deleteProject
-} = require('./projects');
+const getDBClient = curry((clientClass, user, database, ssl) =>
+        new clientClass({
+            // connectionString: process.env.DATABASE_URL,
+            user,
+            database,
+            ssl,
+        }
+    )
+)
 
 module.exports = {
-    users: {
-        getUsers,
-        createUser,
-        deleteUser,
-        login
-    },
-    projects: {
-        getProjects,
-        createProject,
-        deleteProject
-    }
+    getDBClient
 }

@@ -20,8 +20,6 @@ const aws = require('aws-sdk');
 const corsMiddleware = require('restify-cors-middleware');
 
 
-
-
 const server = restify.createServer();
 const restifyOAuth2 = require("restify-oauth2-pure");
 const hooks = require("./hooks");

@@ -3,7 +3,6 @@ const { expect } = chai
 
 const {
     getDBClient,
-    getPostgresClient,
     getUsers,
     findUser,
     comparePassword,
@@ -15,7 +14,6 @@ const {
 } = require('../../../database/users')
 
 const stubDBClient = {
-    connect: ()=> Promise.resolve(),
     query: () => Promise.resolve({
         rowCount: 1,
         rows: [{
@@ -33,20 +31,14 @@ const stubBCryptModule = {
 };
 
 describe('database/users', () => {
-    describe('getDBClient', ()=> {
+    describe('getDBClient when called', ()=> {
         it('should work with good stub', () => {
             const stubClient = function(){}
             const result = getDBClient(stubClient, 'user', 'database', false)
             expect(result).to.exist;
         })
     })
-    describe('getPostgresClient', ()=> {
-        it('should work with good stub', ()=> {
-            const result = getPostgresClient('user', 'database', false);
-            expect(result).to.exist;
-        })
-    })
-    describe('getUsers', ()=> {
+    describe('getUsers when called', ()=> {
         it('should work with good stubs', done => {
             getUsers(stubDBClient)
             .then(users => {
@@ -56,7 +48,7 @@ describe('database/users', () => {
             .catch(done);
         })
     })
-    describe('findUser', ()=> {
+    describe('findUser when called', ()=> {
         it('should work with good stubs', done => {
             findUser(stubDBClient, 1)
             .then(user => {
@@ -66,7 +58,7 @@ describe('database/users', () => {
             .catch(done);
         })
     })
-    describe('comparePassword', ()=> {
+    describe('comparePassword when called', ()=> {
         it('should work with good stubs', done => {
             comparePassword(stubBCryptModule, 'password', 'hash')
             .then(result => {
@@ -76,9 +68,9 @@ describe('database/users', () => {
             .catch(done);
         })
     })
-    describe('login', ()=> {
+    describe('login when called', ()=> {
         it('should work with good stubs', done => {
-            login(stubDBClient, stubBCryptModule, 'username', 'password')
+            login(stubBCryptModule, stubDBClient, 'username', 'password')
             .then(result => {
                 expect(result.username).to.equal('someuser');
                 done();
@@ -86,7 +78,7 @@ describe('database/users', () => {
             .catch(done);
         })
     })
-    describe('findUserByUsername', ()=> {
+    describe('findUserByUsername when called', ()=> {
         it('should work with good stubs', done => {
             findUserByUsername(stubDBClient, 'someuser')
             .then(result => {
@@ -96,7 +88,7 @@ describe('database/users', () => {
             .catch(done);
         })
     })
-    describe('encryptPassword', ()=> {
+    describe('encryptPassword when called', ()=> {
         it('should work with good stubs', done => {
             encryptPassword(stubBCryptModule, 15, 'password')
             .then(result => {
@@ -106,9 +98,9 @@ describe('database/users', () => {
             .catch(done);
         })
     })
-    describe('createUser', ()=> {
+    describe('createUser when called', ()=> {
         it('should work with good stubs', done => {
-            createUser(stubDBClient, stubBCryptModule, 15, 'username', 'password', 'email')
+            createUser(stubBCryptModule, stubDBClient, 15, 'username', 'password', 'email')
             .then(result => {
                 expect(result.username).to.equal('someuser');
                 done();
@@ -116,7 +108,7 @@ describe('database/users', () => {
             .catch(done);
         })
     })
-    describe('deleteUser', ()=> {
+    describe('deleteUser when called', ()=> {
         it('should work with good stubs', done => {
             deleteUser(stubDBClient, 'username')
             .then(result => {
