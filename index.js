@@ -2,6 +2,9 @@ const log = console.log;
 log("Starting Restify...");
 
 const restify = require("restify");
+const bcrypt = require('bcrypt')
+const { Pool, Client } = require('pg')
+const pool = new Pool()
 const { get } = require("lodash/fp");
 const {
   getUsers,
@@ -9,12 +12,12 @@ const {
   deleteUser,
   findUser,
   findUserByUsername
-} = require("./database").users;
+} = require("./database/users");
 const {
   getProjects,
   createProject,
   deleteProject
-} = require("./database").projects;
+} = require("./database/projects");
 require('dotenv').config();
 const aws = require('aws-sdk');
 const corsMiddleware = require('restify-cors-middleware');
@@ -112,18 +115,53 @@ server.get(RESOURCES.SECRET, function(req, res) {
   res.send(response);
 });
 
+
+
+
 server.get("/api/ping", (req, res) => {
   res.send({ result: true, data: "pong" });
 });
 
-server.post("/login", (req, res) => {
-  log("/login made it passed local, req.mySession:", req.mySession);
-  log("X-Cow header:", req.header("X-Cow"));
-  res.header("X-Cow", true);
-  res.send({ result: true });
+const testDatabase = async (req) => {
+  try {
+    const client = new Client({
+      // connectionString: process.env.DATABASE_URL,
+      user: "jessewarden",
+      database: "jessewarden",
+      ssl: false
+    });
+
+    await client.connect();
+
+    const res = await client.query("SELECT $1::text as message", [
+      "Hello world!"
+    ]);
+    console.log(res.rows[0].message); // Hello world!
+    await client.end();
+    return res.rows
+  } catch (error) {
+    console.log("error:", error);
+    return error
+  }
+}
+
+server.get("/api/ping/database", (req, res) => {
+  testDatabase(req)
+  .then(result => res.send({result: true, data: result}))
+  .catch(error => res.send({result: false, error: String(error)}))
 });
 
-server.get("/sign-s3", (req, res) => {
+
+const verifyAuthenticated = (req, res, next) => {
+  if (!req.clientId || !req.username) {
+    return res.sendUnauthenticated();
+  } else {
+    return next();
+  }
+};
+
+
+server.get("/sign-s3", verifyAuthenticated, (req, res) => {
   const s3 = new aws.S3();
   const fileName = req.query["file-name"];
   const fileType = req.query["file-type"];
@@ -149,47 +187,14 @@ server.get("/sign-s3", (req, res) => {
   });
 });
 
-const testDatabase = async () => {
-  try {
-    const client = new Client({
-      // connectionString: process.env.DATABASE_URL,
-      user: "jessewarden",
-      database: "jessewarden",
-      ssl: false
-    });
-
-    await client.connect();
-
-    const res = await client.query("SELECT $1::text as message", [
-      "Hello world!"
-    ]);
-    console.log(res.rows[0].message); // Hello world!
-    return res.rows;
-    await client.end();
-  } catch (err) {
-    console.log("error:", err);
-    return Promise.reject(err);
-  }
-};
-
-// if (!req.clientId) {
-// 	return res.sendUnauthenticated();
-// }
-
-const verifyAuthenticated = (req, res, next) => {
-  if (!req.clientId || !req.username) {
-    return res.sendUnauthenticated();
-  } else {
-    return next();
-  }
-};
-
+// TODO: don't let anyone view this route, only ADMIN's
 server.get("/api/users", verifyAuthenticated, (req, res) => {
   console.log("req.clientId:", req.clientId);
   console.log("req.username:", req.username);
-  getUsers()
+  getUsers(pool)
     .then(result => {
-      res.send({ result: true, data: result.rows });
+      console.log("getUsers result:", result)
+      res.send({ result: true, data: result });
     })
     .catch(error => {
       res.send(500, {
@@ -203,8 +208,9 @@ const getUsername = get("username");
 const getEmail = get("email");
 const getPassword = get("password");
 
+// TODO: needs to login role only
 server.post("/api/users/create", (req, res) => {
-  createUser(getUsername(req.body), getPassword(req.body), getEmail(req.body))
+  createUser(bcrypt, pool, 16, getUsername(req.body), getPassword(req.body), getEmail(req.body))
     .then(result => {
       res.send({ result: true });
     })
@@ -213,6 +219,8 @@ server.post("/api/users/create", (req, res) => {
       res.send(500, { result: false, error });
     });
 });
+
+// TODO: needs to login-delete role only
 server.del("/api/users/delete/:username", (req, res) => {
   deleteUser(req.params.username)
     .then(result => {
@@ -236,37 +244,6 @@ server.get("/api/projects", (req, res) => {
         error: `Failed to connect to database: ${error}`
       });
     });
-});
-
-// server.post('/api/projects/create', (req, res) => {
-
-// 	createUser(getUsername(req.body), getPassword(req.body), getEmail(req.body))
-// 	.then(result => {
-// 		res.send({result: true});
-// 	})
-// 	.catch(error => {
-// 		log("/api/users/create, error:", error);
-// 		res.send(500, {result: false, error});
-// 	});
-// });
-
-// server.del('/api/users/delete/:username', (req, res) => {
-// 	deleteUser(req.params.username)
-// 	.then(result => {
-// 		log("result:", result);
-// 		res.send({result: true, data: `Deleted ${result}`});
-// 	})
-// 	.catch(error => {
-// 		log("/api/users/delete/:username, error:", error);
-// 		res.send(500, {result: false, error: error.message});
-// 	});
-
-// });
-
-server.get("/api/pingdatabase", (req, res) => {
-  testDatabase()
-    .then(result => res.send({ result: true, data: result }))
-    .catch(error => res.send({ result: false, error }));
 });
 
 const port = process.env.PORT || 5000;

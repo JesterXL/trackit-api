@@ -1,11 +1,11 @@
--- CREATE TABLE users (
---     id              SERIAL,
---     username            varchar(80) primary key,
---     email               varchar(255),
---     password            text,
---     salt                text,
---     date                date
--- );
+CREATE TABLE users (
+    id              SERIAL,
+    username            varchar(80) primary key,
+    email               varchar(255),
+    password            text,
+    salt                text,
+    date                date
+);
 
 CREATE TABLE events (
       id SERIAL PRIMARY KEY,
@@ -18,18 +18,18 @@ CREATE TABLE events (
       end_time DATE
 );
 
--- CREATE TABLE project (
---     id              SERIAL,
---     date            date,
---     name            varchar(255),
---     userid          int
--- );
+CREATE TABLE project (
+    id              SERIAL,
+    date            date,
+    name            varchar(255),
+    userid          int
+);
 
--- CREATE TABLE image (
---     id              SERIAL,
---     url             text,
---     projectid       int
--- );
+CREATE TABLE image (
+    id              SERIAL,
+    url             text,
+    projectid       int
+);
 
 
 -- INSERT INTO users(username, email, password, date) VALUES ('jesterxl', 'jesse.warden@gmail', 'password', '2018-1-27');

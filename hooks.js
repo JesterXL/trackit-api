@@ -3,9 +3,12 @@
 const { has, get } = require("lodash/fp");
 const crypto = require("crypto");
 const randomNumber = require("random-number-csprng");
-const { login } = require('./database').users;
+const { login } = require('./database/users');
+const bcrypt = require('bcrypt');
+const { Pool } = require('pg')
+const pool = new Pool()
 
-var database = {
+const database = {
     clients: {
         officialApiClient: { secret: "C0FFEE" },
         unofficialClient: { secret: "DECAF" }
@@ -31,7 +34,7 @@ const grantClientToken = (credentials, req, cb) => {
     console.log("grantClientToken, credentials:", credentials);
     const username = get('clientId', credentials);
     const password = get('clientSecret', credentials);
-    return login(username, password)
+    return login(bcrypt, pool, username, password)
     .then(user => {
         console.log("grantClientToken, user:", user);
         generateToken(credentials.clientId + ":" + credentials.clientSecret)
@@ -49,7 +52,7 @@ const grantClientToken = (credentials, req, cb) => {
         cb(null, false);
         return Promise.resolve(false);
     })
-};
+}
 
 const authenticateToken = (token, req, cb) =>
     new Promise( success => {

@@ -144,7 +144,6 @@ const deleteUser = curry((dbClient, username) =>
 )
 
 module.exports = {
-    getDBClient,
     getUsers,
     createUser,
     deleteUser,
